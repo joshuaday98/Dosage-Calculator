@@ -1,0 +1,22 @@
+body{
+  height:100%;
+  width:99%;
+}
+
+hr{
+  width: 80%;
+  border: 2px solid #000000
+}
+
+input[type='radio']{
+  margin-left: 10px;
+  margin-right: 5px;
+}
+
+input[name='cal-intake']{
+  margin-top: 7px;
+}
+
+input[name='cycle-length']{
+  width: 75%;
+}
