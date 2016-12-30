@@ -1,8 +1,11 @@
 body{
   height:100%;
   width:99%;
+  overflow:hidden;
 }
-
+input[type=number]{
+  width:100%
+}
 hr{
   width: 80%;
   border: 2px solid #000000
@@ -19,4 +22,14 @@ input[name='cal-intake']{
 
 input[name='cycle-length']{
   width: 75%;
+}
+
+.menu{
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.cont{
+    margin-top: 7%;
+    margin-left: 25%;
 }

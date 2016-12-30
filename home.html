@@ -9,7 +9,7 @@
   </head>
   <body>
     <main>
-      <section class='col-sm-3'>
+      <section class='menu col-sm-3'>
         <h1>Dosage-Calculator</h1>
         <hr />
         <form action='javascript:handleform()' id='dose_form'>
@@ -37,14 +37,19 @@
           <input type='number' name='cal-intake' placeholder='Kcal' required/>
           <!-- 4 -->
           <h3>Split dosing:</h3>
-          <input type='radio' name='split-dose' required/>Yes
-          <input type='radio' name='split-dose' required/>No
-          <select name='doses-daily' form='dose_form'>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>
+          <radiogroup id='daily-conditional'>
+            <input id='split-yes' type='radio' name='split-dose' onchange='$("#doses-daily").fadeIn();' required/>Yes
+            <input id='split-no' type='radio' name='split-dose' onchange='$("#doses-daily").fadeOut();' required/>No
+          </radiogroup>
+          <div id='doses-daily' style='display:none'>
+            <small class='form-text'>How many doses per day?</small>
+            <select name='doses-daily' form='dose_form'>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
           <!-- 5 -->
           <h3> Same dose & Time of Dose:</h3>
           <small class='form-text text-muted'>Will you be taking the same dose at the same time each day?</small><br />
@@ -53,6 +58,8 @@
           <!-- 6 -->
           <h3>Cycle Length:</h3>
           Days: <input type='number' name='cycle-length' placeholder="Cycle length" required/>
+          <br />
+          <button id='cont' class='cont btn btn-primary'>Continue</button>
           <!-- 7 -->
         </form>
       </section>
