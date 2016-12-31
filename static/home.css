@@ -25,11 +25,15 @@ input[name='cycle-length']{
 }
 
 .menu{
-    height: 100%;
-    overflow-y: scroll;
+  overflow-y: scroll;
 }
 
-.cont{
-    margin-top: 7%;
-    margin-left: 25%;
+button{
+  margin-top: 7%;
+  margin-left: 25%;
+  margin-bottom: 2%
+}
+
+input[name=dose], input[name=time]{
+  width:75%
 }
