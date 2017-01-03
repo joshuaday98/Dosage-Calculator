@@ -33,9 +33,11 @@
           <input type='radio' name='weight-unit' value='lbs' required/> Lbs
           <input type='radio' name='weight-unit' value='kg' required/>Kg
           <!-- 3 -->
-          <h3>Caloric Intake:</h3>
+          <h3>Calories:</h3>
           <small class='form-text text-muted'>Your caloric intake while on your cycle (in Kcal).</small><br />
           <input type='number' name='cal-intake' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
+          <small class='form-text text-muted'>Your average caloric expenditure daily</small>
+          <input type='number' name='cal-export' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
           <!-- 4 -->
           <h3>Split dosing:</h3>
           <radiogroup id='daily-conditional'>
@@ -72,35 +74,54 @@
 
       </section>
     </main>
-    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src='https://cdn.jsdelivr.net/jquery.ui.timepicker.addon/1.4.5/jquery-ui-sliderAccess.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/i18n/jquery-ui-timepicker-addon-i18n.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js'></script>
     <script src='static/home.js'></script>
     <script type='text/javascript'>
 
 
+    function calculations(form_data){
+      /*
+      C(t) = C(o)^-rt
+      C(t) = blood concentration @ time
+      r = half life (1/36)
+      t = time in hours
+      */
+
+      if(form_data.cycle.length == 1){
+        var t, o, r = 24, formdata.dose_info[0][0], 0.027777778
+        var exponent = -1 * (r*t)
+        var concentration = (o * Math.pow(10, exponent)
+      }
+    }
+
+
     function handleIt(){
-      var value_array = [$('input[name=type]:checked').val(),
-                        [$('input[name=weight]').val(), $('input[name=weight-unit]:checked').val()],
-                         $('input[name=cal-intake]').val(),
-                         $('input[name=cycle-length]').val()];
+      var form_data = {'type':$('input[name=type]:checked').val(),
+                       'weight':{'amount':$('input[name=weight]').val(),
+                                 'unit':$('input[name=weight-unit]:checked').val()},
+                       'calories':{'ci':$('input[name=cal-intake]').val(),
+                                   'ce':$('input[name=cal-export]').val()},
+                       'cycle':$('input[name=cycle-length]').val()}
 
       var doses = $("input[name='dose']").map(function(){return $(this).val();}).get();
       var dose_time = $("input[name='time']").map(function(){return $(this).val();}).get();
 
-      var dose_info = doses.map(function (e, i){
+      var dose_info_array = doses.map(function (e, i){
         if($('#dose_form').attr('name') === 'form-nn'){
-          var day = 1;
-          return [day, e, dose_time[i]];
+          var day = 0;
           day++;
+          return [day, e, dose_time[i]];
         }else{
           return [e, dose_time[i]]
         }
-      }
-      value_array.push(dose_info);
+      });
+      $.extend(form_data, {'dose_info':dose_info_array});
+      console.log(form_data)
+      calculations(form_data)
     }
 
     </script>

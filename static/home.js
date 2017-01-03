@@ -15,11 +15,13 @@
   }
 
   //////////////////////////////////////// 2 ///////////////////////////////////
-
+  function calculations(dose_info){
+    console.log(dose_info)
+  }
   //////////////////////////////////////// 3 ///////////////////////////////////
   function cont(dosing_var){
     $('#time').timepicker();
-    var dose_time_field = '</br><input type="number" name="dose" min="1" placeholder="Dose" class="dose" required>mg</br><input class="time" type="text" name="time" placeholder="Time" required>'
+    var dose_time_field = '</br><input type="number" name="dose" min="1" placeholder="Dose" class="dose"required>mg</br><input class="time" type="text" name="time" placeholder="Time" required>'
     var $dose_div = $('#dosing-amounts')
     var $splits = $('select[name=doses-daily]').val()
 
