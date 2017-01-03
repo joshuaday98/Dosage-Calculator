@@ -5,7 +5,7 @@
     <title>Dosage Calculator</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/jquery.ui.timepicker.addon/1.4.5/jquery-ui-timepicker-addon.min.css' />
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css' />
     <link rel='stylesheet' href='static/home.css'/>
   </head>
   <body>
@@ -13,7 +13,7 @@
       <section id='menu' class='menu col-sm-3'>
         <h1>Dosage-Calculator</h1>
         <hr />
-        <form action='javascript:handleform()' id='dose_form'>
+        <form action='javascript:;' onSubmit='handleIt()' id='dose_form' method='post' name=''>
           <!--
           1: Type of ingestion
           2: Users current weight
@@ -29,13 +29,13 @@
           <input type='radio' name='type' value='1' required/>Powder
           <!-- 2 -->
           <h3>Weight:</h3>
-          <input type='number' name='weight' placeholder="Your weight here" required/>
+          <input type='number' name='weight' placeholder="Your weight here" pattern='^[0-9]{3}$' required/>
           <input type='radio' name='weight-unit' value='lbs' required/> Lbs
           <input type='radio' name='weight-unit' value='kg' required/>Kg
           <!-- 3 -->
           <h3>Caloric Intake:</h3>
           <small class='form-text text-muted'>Your caloric intake while on your cycle (in Kcal).</small><br />
-          <input type='number' name='cal-intake' placeholder='Kcal' min='1' required/>
+          <input type='number' name='cal-intake' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
           <!-- 4 -->
           <h3>Split dosing:</h3>
           <radiogroup id='daily-conditional'>
@@ -60,17 +60,12 @@
           </radiogroup>
           <!-- 6 -->
           <h3>Cycle Length:</h3>
-          Days: <input type='number' name='cycle-length' placeholder="Cycle length" min='1' required/>
+          Days: <input type='number' name='cycle-length' placeholder="Cycle length" min='1' pattern='^[0-9]{3}' required/>
           <br />
-          <p id='warning' class='text-warning'></p>
           <button id='cont-btn' class='cont btn btn-primary' >Continue</button>
           <!-- 7 -->
-          <div id='dosing-amounts'>
-
-          </div>
-          <div id='submit'>
-
-          </div>
+          <div id='dosing-amounts'></div>
+          <div id='submit'></div>
         </form>
       </section>
       <section class='col-sm-9'>
@@ -81,7 +76,33 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src='https://cdn.jsdelivr.net/jquery.ui.timepicker.addon/1.4.5/jquery-ui-sliderAccess.js'></script>
-    <script src='https://cdn.jsdelivr.net/jquery.ui.timepicker.addon/1.4.5/jquery-ui-timepicker-addon.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/i18n/jquery-ui-timepicker-addon-i18n.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js'></script>
     <script src='static/home.js'></script>
+    <script type='text/javascript'>
+
+
+    function handleIt(){
+      var value_array = [$('input[name=type]:checked').val(),
+                        [$('input[name=weight]').val(), $('input[name=weight-unit]:checked').val()],
+                         $('input[name=cal-intake]').val(),
+                         $('input[name=cycle-length]').val()];
+
+      var doses = $("input[name='dose']").map(function(){return $(this).val();}).get();
+      var dose_time = $("input[name='time']").map(function(){return $(this).val();}).get();
+
+      var dose_info = doses.map(function (e, i){
+        if($('#dose_form').attr('name') === 'form-nn'){
+          var day = 1;
+          return [day, e, dose_time[i]];
+          day++;
+        }else{
+          return [e, dose_time[i]]
+        }
+      }
+      value_array.push(dose_info);
+    }
+
+    </script>
   </body>
 </html>
