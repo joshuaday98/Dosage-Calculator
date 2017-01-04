@@ -57,7 +57,7 @@
           <h3> Same dose & Time of Dose:</h3>
           <small class='form-text text-muted'>Will you be taking the same dose at the same time each day?</small><br />
           <radiogroup id='samedose-time'>
-            <input type='radio' name='samedose-time' value='yes'required />Yes
+            <input type='radio' name='samedose-time' value='yes' required />Yes
             <input type='radio' name='samedose-time' value='no' required />No
           </radiogroup>
           <!-- 6 -->
@@ -90,17 +90,22 @@
       r = half life (1/36)
       t = time in hours
       */
+      // TODO: while t != time between doses append concentration to array increments by .25
+      if($('#dose_form').attr('name') == 'form-ny'){
+        var t = 0.25, o = formdata.dose_info[0][0], r = 1/36;
+        var e = Math.pow(10, (-1 * (r * t)));
 
-      if(form_data.cycle.length == 1){
-        var t, o, r = 0.25, formdata.dose_info[0][0], 0.027777778
+        var concentration_fifteen = [];
 
         while(t != 24.50){
-          var exponent = -1 * (r*t)
-          var concentration = (o * Math.pow(10, exponent)
-        }
-
+          var concentration = ((o * e) * form_data.type) + (concentration_fifteen.length >= 1 ? concentration_fifteen[concentration_fifteen.length - 1]:0);
+          concentration_fifteen.push(concentration);
+          t += 0.25
+        };
+      } else if($('#dose_form').attr('name') == 'form-yy'){
+        console.log('lmao')
       }
-    }
+    };
 
 
     function handleIt(){
@@ -112,21 +117,26 @@
                        'cycle':$('input[name=cycle-length]').val()}
 
       var doses = $("input[name='dose']").map(function(){return $(this).val();}).get();
-      var dose_time = $("input[name='time']").map(function(){return $(this).val();}).get();
+      var dose_time = $("input[name='time']").map(function(){var time_str = $(this).val();
+                                                             time_str = time_str.split(':');
+                                                             var hour = time_str[0];
+                                                             var min = (Number(time_str[1]) * 60) / 3600;
+                                                             return hour + min;
+                                                             }).get();
+      var day = 0;
 
       var dose_info_array = doses.map(function (e, i){
         if($('#dose_form').attr('name') === 'form-nn'){
-          var day = 0;
           day++;
-          return [day, e, dose_time[i]];
+          return {day:{'dose':e, 'time':dose_time[i]}};
         }else{
-          return [e, dose_time[i]]
+          return {'dose':e, 'time':dose_time[i]};
         }
       });
       $.extend(form_data, {'dose_info':dose_info_array});
-      console.log(form_data)
-      calculations(form_data)
-    }
+      console.log(form_data);
+      calculations(form_data);
+    };
 
     </script>
   </body>

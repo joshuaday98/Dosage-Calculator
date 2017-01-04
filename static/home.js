@@ -2,7 +2,7 @@
   'use strict';
   /*
   Table of contents:
-    1. Graph Creation --  create_charts()
+    1.
     2.
     3. Dosage time/amount section -- cont()
     4. Creating events needed on page load -- events()
@@ -10,18 +10,13 @@
   */
 
   //////////////////////////////////////// 1 ///////////////////////////////////
-  function create_charts(){
-    console.log('lmao')
-  }
 
   //////////////////////////////////////// 2 ///////////////////////////////////
-  function calculations(dose_info){
-    console.log(dose_info)
-  }
+
   //////////////////////////////////////// 3 ///////////////////////////////////
   function cont(dosing_var){
     $('#time').timepicker();
-    var dose_time_field = '</br><input type="number" name="dose" min="1" placeholder="Dose" class="dose"required>mg</br><input class="time" type="text" name="time" placeholder="Time" required>'
+    var dose_time_field = '</br><input type="number" name="dose" min="1" placeholder="Dose" class="dose"required>mg</br><input data-toggle="popover" data-content="We only use 24 hour format. With a different format the data will be drastically changed. " class="time" type="text" name="time" placeholder="Time" required>'
     var $dose_div = $('#dosing-amounts')
     var $splits = $('select[name=doses-daily]').val()
 
@@ -49,7 +44,6 @@
       };
     }
 
-    $('.time').timepicker();
     $('#cont-btn').remove();
     $('#submit').append('<button type="submit" class="btn btn-primary" id="submit">Submit</button>');
   };
@@ -70,6 +64,7 @@
         alert('The Split dosing, Same dose & Time of Dose, and the Cycle Length sections must be filled out.')
       }
     });
+    $('[data-toggle="popover"]').popover({trigger:'focus'});
   })();
   //////////////////////////////////////// 5 ///////////////////////////////////
   (function menu_sizing(){
