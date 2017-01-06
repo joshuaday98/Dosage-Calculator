@@ -16,17 +16,17 @@
   //////////////////////////////////////// 3 ///////////////////////////////////
   function cont(dosing_var){
     $('#time').timepicker();
-    var dose_time_field = '</br><input type="number" name="dose" min="1" placeholder="Dose" class="dose"required>mg</br><input data-toggle="popover" data-content="We only use 24 hour format. With a different format the data will be drastically changed. " class="time" type="text" name="time" placeholder="Time" pattern="^([0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]" required>'
-    var $dose_div = $('#dosing-amounts')
-    var $splits = $('select[name=doses-daily]').val()
+    var dose_time_field = '</br><input type="number" name="dose" min="1" placeholder="Dose" class="dose"required>mg</br><input data-toggle="popover" data-content="We only use 24 hour format. With a different format the data will be drastically changed. " class="time" type="text" name="time" placeholder="Time" pattern="^([0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]" required>';
+    var $dose_div = $('#dosing-amounts');
+    var $splits = $('select[name=doses-daily]').val();
 
     if(dosing_var[0] === 'no' & dosing_var[1] === 'yes'){
-      $('#dose_form').attr('name') == 'form-ny'
+      $('#dose_form').attr('name', 'form-ny');
       $dose_div.html('</br><span>Days 1-'+ dosing_var[2] +'</span>');
       $dose_div.append(dose_time_field)
 
     } else if(dosing_var[0] === 'yes' & dosing_var[1] === 'yes'){
-      $('#dose_form').attr('name') == 'form-yy'
+      $('#dose_form').attr('name', 'form-yy');
       $dose_div.html('</br><span>Days 1-' + dosing_var[2] +'</span></br>');
 
       while($splits != 0){
@@ -35,11 +35,11 @@
       };
 
     } else if(dosing_var[0] === 'no' & dosing_var[1] === 'no'){
-      $('#dose_form').attr('name') == 'form-nn'
+      $('#dose_form').attr('name', 'form-nn');
       var day = 1;
 
       while(day <= dosing_var[2]){
-        $dose_div.append('Day ' + day + ':' + dose_time_field+ '</br>')
+        $dose_div.append('Day ' + day + ':' + dose_time_field+ '</br>');
         day++;
       };
     }

@@ -37,3 +37,8 @@ button{
 input[name=dose], input[name=time]{
   width:75%
 }
+
+canvas{
+  width: 400;
+  height: 400;
+}
