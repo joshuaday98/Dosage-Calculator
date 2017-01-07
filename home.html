@@ -123,71 +123,85 @@
     };
 
 
+    function format_time(inp){
+      inp = inp.toString();
+      inp = inp.split('.');
+      var hour = Number(inp[0]), min= (Number(inp[1])* 60) / 100;
+
+      hour > 24 ? hour -= 24 : hour = hour;
+      isNaN(min) ? min = '00' : min = min.toString();
+
+      var time_str = hour.toString() + ':' + min.toString() + (min == '3' ? '0' : '');
+      return time_str
+    };
+
     function calculations(form_data){
-          /*
-          C(t) = C(o)^-rt
-          C(t) = blood concentration @ time
-          r = half life (1/36)
-          t = time in hours
-          */
+        /*
+        C(t) = C(o)^-rt
+        C(t) = blood concentration @ time
+        r = half life (1/36)
+        t = time in hours
+        */
 
-          var concentration_fifteen = [];
-          var times = [];
+        var concentration_fifteen = [];
+        var times = [];
 
-          if($('#dose_form').attr('name') == 'form-ny'){
-            var t = 0, o = form_data.dose_info[0].time, r = 1/36;
-            var label_time = form_data.dose_info[0].time;
-            var days = 0
-            var next_time = 24.50
-            // TODO: MAKE IT WORK
-            if(days != form_data.cycle){
-              while(t != next_time){
-                var e = Math.pow(10, (-1 * (r * t)));
-                var concentration = (o * e);
-                concentration = concentration * form_data.type;
-                concentration = Math.round(concentration + (t + 0.25 == next_time ? concentration_fifteen[concentration_fifteen.length - 1]:0), 4)
+        if($('#dose_form').attr('name') == 'form-ny'){
+          var t = 0, o = form_data.dose_info[0].dose, r = 1/36;
+          var label_time = form_data.dose_info[0].time;
+          var days = 0
+          var next_time = 24.50
 
-                concentration_fifteen.push(concentration); times.push(label_time);
-                (t + 0.25 == next_time ? (days++, t += 0):t += 0.25)
-                label_time += 0.25;
-              };
+          // TODO: MAKE IT WORK
+          while(days != form_data.cycle){
+            while(t < next_time){
+              var e = Math.pow(10, (-1 * (r * t)));
+              var concentration = (o * e);
+              concentration = concentration * form_data.type;
+              concentration = concentration + (t + 0.25 == next_time ? concentration_fifteen[concentration_fifteen.length - 1]:0);
+
+              concentration_fifteen.push(concentration); times.push(format_time(label_time));
+              label_time += 0.25;
+              t += 0.25;
             };
-
-          } else if($('#dose_form').attr('name') == 'form-yy'){
-            var data = form_data.dose_info;
-
-            $.each(data, function(i, v){
-              var next_time = v.time - data[i++].time
-              var t = 0, o = v.dose, r = 1/36;
-
-              while(t != next_time){
-                var e = Math.pow(10, (-1 * (r * t)));
-                var concentration = o * e;
-                concentration = concentration * form_data.type;
-                concentration = concentration + (t + 0.25 == next_time ? concentration_fifteen[concentration_fifteen.length - 1]:0);
-                concentration_fifteen.push(concentration); times.push(label_time);
-                t += 0.25; label_time += 0.25;
-              };
-            });
-          } else{
-            var data = form_data.dose_info;
-
-            $.each(data, function(i, v){
-              var next_time = v.time - data[i++].time, t = 0, o = v.dose, r = 1/36;
-
-              while(t != next_time){
-                var e = Math.pow(10, (-1 * (r * t)));
-                var concentration = o * e;
-                concentration = concentration * form_data.type;
-                concentration= concentration + (t + 0.25 == next_time ? concentration_fifteen[concentration_fifteen.length - 1]:0);
-                concentration_fifteen.push(concentration); times.push(label_time);
-                t += 0.25; label_time += 0.25;
-              };
-            });
+            t == 0;
+            days++
           };
-          console.log(concentration_fifteen, times)
-          chartcreation(concentration_fifteen, times)
+        } else if($('#dose_form').attr('name') == 'form-yy'){
+          var data = form_data.dose_info;
+
+          $.each(data, function(i, v){
+            var next_time = v.time - data[i++].time
+            var t = 0, o = v.dose, r = 1/36;
+
+            while(t != next_time){
+              var e = Math.pow(10, (-1 * (r * t)));
+              var concentration = o * e;
+              concentration = concentration * form_data.type;
+              concentration = concentration + (t + 0.25 == next_time ? concentration_fifteen[concentration_fifteen.length - 1]:0).toFixed(4);
+              concentration_fifteen.push(concentration); times.push(label_time);
+              t += 0.25; label_time += 0.25;
+            };
+          });
+        } else{
+          var data = form_data.dose_info;
+
+          $.each(data, function(i, v){
+            var next_time = v.time - data[i++].time, t = 0, o = v.dose, r = 1/36;
+
+            while(t != next_time){
+              var e = Math.pow(10, (-1 * (r * t)));
+              var concentration = o * e;
+              concentration = concentration * form_data.type;
+              concentration= concentration + (t + 0.25 == next_time ? concentration_fifteen[concentration_fifteen.length - 1]:0);
+              concentration_fifteen.push(concentration); times.push(label_time);
+              t += 0.25; label_time += 0.25;
+            };
+          });
         };
+        console.log(concentration_fifteen, times)
+        chartcreation(concentration_fifteen, times)
+      };
 
 
       function handleIt(){
@@ -198,7 +212,7 @@
                                      'ce':Number($('input[name=cal-export]').val())},
                          'cycle':Number($('input[name=cycle-length]').val())}
 
-        var doses = $("input[name='dose']").map(function(){return $(this).val();}).get();
+        var doses = $("input[name='dose']").map(function(){return Number($(this).val());}).get();
         var dose_time = $("input[name='time']").map(function(){var time_str = $(this).val();
                                                                time_str = time_str.split(':');
                                                                var hour = time_str[0];
