@@ -101,14 +101,18 @@
                 while(days != form_data.cycle){
                   while(t < next_time){
                     var len = concentrations.length
-                    len % 25 == 0 ? (o += concentrations[len - 1], end_concent += concentrations[len - 1]):o += 0;
+
+                    if(len != 0){
+                      len % 96 == 0 ? (o += Number(concentrations[len - 1]), o -= end_concent, end_concent = Number(concentrations[len - 1])):o += 0;
+                    }
+
                     var e = Math.pow(10, (-1 * (r * t)));
                     var concentration = (o * e);
                     concentration = concentration * form_data.type;
 
-                    concentrations.push(concentration); times.push(format_time(label_time));
-                    label_time += 1;
-                    t += 1;
+                    concentrations.push(concentration.toFixed(4)); times.push(format_time(label_time));
+                    label_time += 0.25;
+                    t += 0.25;
                   };
                   label_time = 0;
                   t = 0;
@@ -146,8 +150,8 @@
                   };
                 });
               };
-              console.log(concentration, times)
-              chartcreation(concentration, times)
+              console.log(concentrations, times)
+              chartcreation(concentrations, times)
             };
 
 
@@ -156,7 +160,8 @@
                                'weight':{'amount':Number($('input[name=weight]').val()),
                                          'unit':$('input[name=weight-unit]:checked').val()},
                                'calories':{'ci':Number($('input[name=cal-intake]').val()),
-                                           'ce':Number($('input[name=cal-export]').val())},
+                                           'ce':Number($('input[name=cal-export]').val()),
+                                           'cm':Number($('input[name=cal-main]').val())},
                                'cycle':Number($('input[name=cycle-length]').val())}
 
               var doses = $("input[name='dose']").map(function(){return Number($(this).val());}).get();
@@ -193,6 +198,8 @@
           <input type='radio' name='weight-unit' value='kg' required/>Kg
           <!-- 3 -->
           <h3>Calories:</h3>
+          <small class='form-text text-muted'>Your caloric maintenance</small>
+          <input type='number' name='cal-main' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
           <small class='form-text text-muted'>Your caloric intake while on your cycle (in Kcal).</small><br />
           <input type='number' name='cal-intake' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
           <small class='form-text text-muted'>Your average caloric expenditure daily</small>
