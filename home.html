@@ -81,7 +81,7 @@
 
           function calculations(form_data){
               /*
-              C(t) = C(o)^-rt
+              C(t) = C(o)e^-rt
               C(t) = blood concentration @ time
               r = half life (1/36)
               t = time in hours
@@ -105,8 +105,9 @@
                     if(len != 0){
                       len % 96 == 0 ? (o += Number(concentrations[len - 1]), o -= end_concent, end_concent = Number(concentrations[len - 1])):o += 0;
                     }
-
-                    var e = Math.pow(10, (-1 * (r * t)));
+                    var rt= r * t
+                    rt = -1 * rt
+                    var e = Math.pow(Math.E, rt);
                     var concentration = (o * e);
                     concentration = concentration * form_data.type;
 
