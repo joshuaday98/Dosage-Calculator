@@ -99,7 +99,7 @@
 
                 // TODO: MAKE IT WORK
                 while(days != form_data.cycle){
-                  while(t < next_time){
+                  while(t <= next_time){
                     var len = concentrations.length
 
 
@@ -108,15 +108,16 @@
                     var e = Math.pow(Math.E, rt);
                     var concentration = (o * e);
                     concentration = concentration * form_data.type;
-
+                    if(len != 0){
+                      t == next_time ? (o += Number(concentrations[len - 1]), o -= end_concent, end_concent = Number(concentrations[len - 1])):o += 0;
+                    }
                     concentrations.push(concentration); times.push(format_time(label_time));
+
+
 
                     label_time += 0.25;
                     t += 0.25;
                   };
-                  o += Number(concentrations[len - 1]);
-                  o -= end_concent;
-                  end_concent = Number(concentrations[len - 1])
                   label_time = form_data.dose_info[0].time;
                   t = 0;
                   days += 1;
