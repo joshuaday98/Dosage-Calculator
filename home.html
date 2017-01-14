@@ -94,7 +94,7 @@
                 var t = 0, o = form_data.dose_info[0].dose, r = 1/36;
                 var label_time = form_data.dose_info[0].time;
                 var days = 0
-                var next_time = 24.50
+                var next_time = 24
                 var end_concent = 0
 
                 // TODO: MAKE IT WORK
@@ -115,7 +115,6 @@
                     label_time += 0.25;
                     t += 0.25;
                   };
-                  label_time = 0;
                   t = 0;
                   days += 1;
                 };
@@ -224,8 +223,8 @@
           <h3> Same dose & Time of Dose:</h3>
           <small class='form-text text-muted'>Will you be taking the same dose at the same time each day?</small><br />
           <radiogroup id='samedose-time'>
-            <input type='radio' name='samedose-time' value='yes' required />Yes
-            <input type='radio' name='samedose-time' value='no' required />No
+            <input id='sdtd-yes' type='radio' name='samedose-time' value='yes' required />Yes
+            <input id='sdtd-no'type='radio' name='samedose-time' value='no' required />No
           </radiogroup>
           <!-- 6 -->
           <h3>Cycle Length:</h3>
