@@ -109,9 +109,9 @@
                     var concentration = (o * e);
 
                     if(len != 0){
-                      t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentrations[len - 1])):o += 0;
+                      t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentration)):o += 0;
                     }
-                    
+
                     concentrations.push(concentration); times.push(format_time(label_time));
 
                     label_time += 0.25;
