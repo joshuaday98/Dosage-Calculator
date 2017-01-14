@@ -83,7 +83,7 @@
               /*
               C(t) = C(o)e^-rt
               C(t) = blood concentration @ time
-              r = half life (1/36)
+              r = half life (0.0192540883)
               t = time in hours
               */
 
@@ -91,7 +91,7 @@
               var times = [];
 
               if($('#dose_form').attr('name') == 'form-ny'){
-                var t = 0, o = form_data.dose_info[0].dose, r = 1/36;
+                var t = 0, o = form_data.dose_info[0].dose, r = 0.0192540883;
                 var label_time = form_data.dose_info[0].time;
                 var days = 0
                 var next_time = 24
@@ -102,19 +102,22 @@
                   while(t < next_time){
                     var len = concentrations.length
 
-                    if(len != 0){
-                      len % 96 == 0 ? (o += Number(concentrations[len - 1]), o -= end_concent, end_concent = Number(concentrations[len - 1])):o += 0;
-                    }
+
                     var rt= r * t
                     rt = -1 * rt
                     var e = Math.pow(Math.E, rt);
                     var concentration = (o * e);
                     concentration = concentration * form_data.type;
 
-                    concentrations.push(concentration.toFixed(4)); times.push(format_time(label_time));
+                    concentrations.push(concentration); times.push(format_time(label_time));
+
                     label_time += 0.25;
                     t += 0.25;
                   };
+                  o += Number(concentrations[len - 1]);
+                  o -= end_concent;
+                  end_concent = Number(concentrations[len - 1])
+                  label_time = form_data.dose_info[0].time;
                   t = 0;
                   days += 1;
                 };
