@@ -93,9 +93,11 @@
               if($('#dose_form').attr('name') == 'form-ny'){
                 var t = 0, o = form_data.dose_info[0].dose * form_data.type, r = 0.0192540883;
                 var label_time = form_data.dose_info[0].time;
-                var days = 0
+                var days = 0;
+
                 var next_time = 24
-                var end_concent = 0
+                var end_concent = 0;
+
 
                 // TODO: MAKE IT WORK
                 while(days != form_data.cycle){
@@ -123,20 +125,47 @@
                 };
               } else if($('#dose_form').attr('name') == 'form-yy'){
                 var data = form_data.dose_info;
+                var end_concent = 0;
+                var label_time = form_data.dose_info[0].time;
+                var days = 0;
 
-                $.each(data, function(i, v){
-                  var next_time = v.time - data[i++].time
-                  var t = 0, o = v.dose, r = 1/36;
+                while(days != form_data.cycle){
+                  $.each(data, function(i, v){
+                    try{
+                      var next_time = data[i + 1].time - v.time
+                    } catch(typeerror){
+                      var next_time = v.time
+                    };
 
-                  while(t != next_time){
-                    var e = Math.pow(10, (-1 * (r * t)));
-                    var concentration = o * e;
-                    concentration = concentration * form_data.type;
-                    concentration = concentration + (t + 0.25 == next_time ? concentrations[concentrations.length - 1]:0).toFixed(4);
-                    concentration.push(concentration); times.push(label_time);
-                    t += 0.25; label_time += 0.25;
-                  };
-                });
+                    var t = 0, o = v.dose, r = 0.0192540883;
+                    var len = concentrations.length
+
+                    if(len != 0){
+                        o += concentrations[len - 1];
+                        o -= end_concent;
+                        end_concent = concentrations[len - 1];
+                      };
+
+                    while(t <= next_time){
+
+
+                      var rt= r * t
+                      rt = -1 * rt
+                      var e = Math.pow(Math.E, rt);
+                      var concentration = (o * e);
+
+
+
+                      concentrations.push(concentration); times.push(format_time(label_time));
+
+                      label_time += 0.25;
+                      t += 0.25;
+                    };
+                    t = 0;
+                  });
+                  label_time = form_data.dose_info[0].time;
+                  days += 1;
+                };
               } else{
                 var data = form_data.dose_info;
 
@@ -144,13 +173,26 @@
                   var next_time = v.time - data[i++].time, t = 0, o = v.dose, r = 1/36;
 
                   while(t != next_time){
-                    var e = Math.pow(10, (-1 * (r * t)));
-                    var concentration = o * e;
-                    concentration = concentration * form_data.type;
-                    concentration= concentration + (t + 0.25 == next_time ? concentrations[concentrations.length - 1]:0);
-                    concentration.push(concentration); times.push(label_time);
-                    t += 0.25; label_time += 0.25;
+                    var len = concentrations.length
+
+
+                    var rt= r * t
+                    rt = -1 * rt
+                    var e = Math.pow(Math.E, rt);
+                    var concentration = (o * e);
+
+                    if(len != 0){
+                      t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentration)):o += 0;
+                    }
+
+                    concentrations.push(concentration); times.push(format_time(label_time));
+
+                    label_time += 0.25;
+                    t += 0.25;
                   };
+                  label_time = form_data.dose_info[0].time;
+                  t = 0;
+                  days += 1;
                 });
               };
               console.log(concentrations, times)
