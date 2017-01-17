@@ -65,6 +65,45 @@
 
             });
           };
+          function comfort_level(blood_concen, weight_info, time labels){
+            if(weight_info.unit == 'lbs'){
+              var weight = weight_info.amount * 0.453592
+            } else {
+              var weight = weight_info.amount
+            }
+            var green = [], blue = [], yellow = [], orange = [], red = [], black = [], collection = [], nan_list = [];
+            var concen_max = Math.max.apply(null, blood_concen)
+
+            $.each(blood_concen, function(i, v){
+              green.push(4/weight/2.7024);
+              blue.push(4.5/weight/2.7024);
+              yellow.push(5/weight/2.7024);
+              orange.push(5.5/weight/2.7024);
+              red.push(6/weight/2.7024);
+              nan_list.push(NaN)
+            });
+            if(concen_max >= green[0]){
+              collection.push(green);
+              if(concen_max >= blue[0]){
+                collection.push(blue);
+                if(concen_max >= yellow[0]){
+                  collection.push(yellow);
+                  if(concen_max >= orange[0]){
+                    collection.push(orange);
+                    if(concen_max >= red[0])
+                  }else{
+                    collection.push(nan_list);
+                  }
+                }else{
+                  collection.push(nan_list);
+                }
+              }else{
+                collection.push(nan_list);
+              }
+            }else{
+              collection.push(nan_list);
+            }
+          };
 
 
           function format_time(inp){
