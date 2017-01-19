@@ -28,81 +28,157 @@
           <script type='text/javascript'>
 
           'use strict';
+          function extra_info(concentrations, form_data){
+            /*
+            Table of contents:
+            1. Data Structure
+            2. Average Blood concentration
+            3. Average Dosage
+            4. Estimated Fat Loss
+            5. Color info
+            */
+            ///////////////////////////////////////////////////////////// 1
+            var extra_data = {'peak':Math.max.apply(null, concentrations),
+                              };
+            ///////////////////////////////////////////////////////////// 2
+            var total = 0;
+            $.each(concentrations, function(i, v){
+              total += v;
+            });
+            extra_data.average = total / concentrations.length;
+            ///////////////////////////////////////////////////////////// 3
+            var avg_dose = 0, counter = 0;
+            switch($('#dose_form').attr('name')){
+              case 'form-nn':
+                $.each(form_data.dose_info, function(i, v){
+                  avg_dose += v.day.dose;
+                  counter++;
+                });
+                avg_dose = avg_dose / counter;
+                avg_dose = avg_dose / form_data.weight.amount
+                break;
+              case 'form-yy':
+                break;
+              case 'form-ny':
+                break;
+            }
+            ///////////////////////////////////////////////////////////// 4
+            var ci = form_data.calories.ci, ce = form_data.calories.ce, cm = form_data.calories.cm
 
 
-          function chartcreation(blood_concen, time_labels){
-            var chart = $('#graph')
+            ///////////////////////////////////////////////////////////// 5
+
+          };
+
+          function generate_chart_data(i, v){
+            var label = 0, background_color = 0, border_hover_back = 0;
+
+            switch(i){
+              case 'green':
+                label = 'Barely Noticable';
+                background_color = 'rgba(81, 191, 54, 0.04)';
+                border_hover_back = 'rgba(81, 191, 54, 1)';
+                break;
+              case 'blue':
+                label = 'Mildly Uncomfortable';
+                background_color = 'rgba(41, 165, 187, 0.04)';
+                border_hover_back = 'rgba(41, 165, 187, 1)';
+                break;
+              case 'yellow':
+                label = 'Uncomfortable';
+                background_color = 'rgba(247, 245, 47, 0.04)';
+                border_hover_back = 'rgba(247, 245, 47, 1)';
+                break;
+              case 'orange':
+                label = 'Really uncomfortable';
+                background_color = 'rgba(255, 191, 0, 0.04)';
+                border_hover_back = 'rgba(255, 191, 0, 1)';
+                break;
+              case 'red':
+                label = 'Ouch';
+                background_color = 'rgba(255, 52, 52, 0.04)';
+                border_hover_back = 'rgba(255, 52, 52, 1)';
+                break;
+              case 'black':
+                label = 'Absolutly Unbearable';
+                background_color = 'rgba(0, 0, 0, 0.04)';
+                border_hover_back = 'rgba(0, 0, 0, 1)';
+                break;
+              case 'concen':
+                label = 'Blood Concentration'
+                background_color = 'rgba(222, 97, 213, 0.04)';
+                border_hover_back = 'rgba(222, 97, 213, 1)';
+                break;
+            };
+
+            var data_info = {
+                label: label,
+                fill: true,
+                lineTension: 0.1,
+                backgroundColor: background_color,
+                borderColor: border_hover_back,
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: border_hover_back,
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: border_hover_back,
+                pointHoverBorderColor: border_hover_back,
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                data: v,
+                spanGaps: true,
+            };
+
+            return data_info
+          };
+
+
+          function chartcreation(collection, time_labels){
+            var chart = $('#graph');
+            var data = [];
+
+            $.each(collection, function(i, v){
+              data.push(generate_chart_data(i, v))
+            });
+
+            console.log(data)
 
             var myChart = new Chart(chart, {
               type:'line',
               data:{
                       labels: time_labels,
-                      datasets: [
-                                  {
-                                      label: "Blood Concentration",
-                                      fill: true,
-                                      lineTension: 0.1,
-                                      backgroundColor: "rgba(75,192,192,0.4)",
-                                      borderColor: "rgba(75,192,192,1)",
-                                      borderCapStyle: 'butt',
-                                      borderDash: [],
-                                      borderDashOffset: 0.0,
-                                      borderJoinStyle: 'miter',
-                                      pointBorderColor: "rgba(75,192,192,1)",
-                                      pointBackgroundColor: "#fff",
-                                      pointBorderWidth: 1,
-                                      pointHoverRadius: 5,
-                                      pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                                      pointHoverBorderColor: "rgba(220,220,220,1)",
-                                      pointHoverBorderWidth: 2,
-                                      pointRadius: 1,
-                                      pointHitRadius: 10,
-                                      data: blood_concen,
-                                      spanGaps: true,
-                                  }
-                                ]
-                              },
-
+                      datasets: data
+                    },
             });
           };
-          function comfort_level(blood_concen, weight_info, time labels){
-            if(weight_info.unit == 'lbs'){
-              var weight = weight_info.amount * 0.453592
-            } else {
-              var weight = weight_info.amount
-            }
-            var green = [], blue = [], yellow = [], orange = [], red = [], black = [], collection = [], nan_list = [];
-            var concen_max = Math.max.apply(null, blood_concen)
+
+
+          function comfort_level(blood_concen, time_labels, weight_info){
+            var weight = 0
+            weight_info.unit == 'lbs' ? weight = weight_info.amount * 0.453592:weight = weight_info.amount;
+            var collection = {'green':[],
+                              'blue':[],
+                              'yellow':[],
+                              'orange':[],
+                              'red':[],
+                              'concen': blood_concen};
+
+            var concen_max = Math.max.apply(null, blood_concen);
 
             $.each(blood_concen, function(i, v){
-              green.push(4/weight/2.7024);
-              blue.push(4.5/weight/2.7024);
-              yellow.push(5/weight/2.7024);
-              orange.push(5.5/weight/2.7024);
-              red.push(6/weight/2.7024);
-              nan_list.push(NaN)
-            });
-            if(concen_max >= green[0]){
-              collection.push(green);
-              if(concen_max >= blue[0]){
-                collection.push(blue);
-                if(concen_max >= yellow[0]){
-                  collection.push(yellow);
-                  if(concen_max >= orange[0]){
-                    collection.push(orange);
-                    if(concen_max >= red[0])
-                  }else{
-                    collection.push(nan_list);
-                  }
-                }else{
-                  collection.push(nan_list);
-                }
-              }else{
-                collection.push(nan_list);
-              }
-            }else{
-              collection.push(nan_list);
-            }
+              concen_max <= 4*weight*2.7024 ? collection.green.push(4/weight/2.7024):collection.green.push(NaN);
+              concen_max <= 4.5*weight*2.7024 ? collection.blue.push(4.5/weight/2.7024):collection.blue.push(NaN);
+              concen_max <= 5*weight*2.7024 ? collection.yellow.push(5/weight/2.7024):collection.yellow.push(NaN);
+              concen_max <= 5.5*weight*2.7024 ? collection.orange.push(5.5/weight/2.7024):collection.orange.push(NaN);
+              concen_max <= 6*weight*2.7024 ? collection.red.push(6/weight/2.7024):collection.red.push(NaN);
+              });
+
+            chartcreation(collection, time_labels);
           };
 
 
@@ -115,7 +191,7 @@
             isNaN(min) ? min = '00' : min = min.toString();
 
             var time_str = hour.toString() + ':' + min.toString() + (min == '3' ? '0' : '');
-            return time_str
+            return time_str;
           };
 
           function calculations(form_data){
@@ -234,8 +310,9 @@
                   days += 1;
                 });
               };
-              console.log(concentrations, times)
-              chartcreation(concentrations, times)
+              console.log(concentrations, times);
+              comfort_level(concentrations, times, form_data.weight);
+              extra_data(concentrations, form_data);
             };
 
 
@@ -321,7 +398,7 @@
         </form>
       </section>
       <section class='col-sm-9'>
-        <canvas id='graph'></canvas>
+        <canvas id='graph' class='col-sm-12'></canvas>
       </section>
     </main>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
