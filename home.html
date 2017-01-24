@@ -28,47 +28,9 @@
           <script type='text/javascript'>
 
           'use strict';
-          function extra_info(concentrations, form_data){
-            /*
-            Table of contents:
-            1. Data Structure
-            2. Average Blood concentration
-            3. Average Dosage
-            4. Estimated Fat Loss
-            5. Color info
-            */
-            ///////////////////////////////////////////////////////////// 1
-            var extra_data = {'peak':Math.max.apply(null, concentrations),
-                              };
-            ///////////////////////////////////////////////////////////// 2
-            var total = 0;
-            $.each(concentrations, function(i, v){
-              total += v;
-            });
-            extra_data.average = total / concentrations.length;
-            ///////////////////////////////////////////////////////////// 3
-            var avg_dose = 0, counter = 0;
-            switch($('#dose_form').attr('name')){
-              case 'form-nn':
-                $.each(form_data.dose_info, function(i, v){
-                  avg_dose += v.day.dose;
-                  counter++;
-                });
-                avg_dose = avg_dose / counter;
-                avg_dose = avg_dose / form_data.weight.amount
-                break;
-              case 'form-yy':
-                break;
-              case 'form-ny':
-                break;
-            }
-            ///////////////////////////////////////////////////////////// 4
-            var ci = form_data.calories.ci, ce = form_data.calories.ce, cm = form_data.calories.cm
 
 
-            ///////////////////////////////////////////////////////////// 5
-
-          };
+          
 
           function generate_chart_data(i, v){
             var label = 0, background_color = 0, border_hover_back = 0;
@@ -171,11 +133,11 @@
             var concen_max = Math.max.apply(null, blood_concen);
 
             $.each(blood_concen, function(i, v){
-              concen_max <= 4*weight*2.7024 ? collection.green.push(4/weight/2.7024):collection.green.push(NaN);
-              concen_max <= 4.5*weight*2.7024 ? collection.blue.push(4.5/weight/2.7024):collection.blue.push(NaN);
-              concen_max <= 5*weight*2.7024 ? collection.yellow.push(5/weight/2.7024):collection.yellow.push(NaN);
-              concen_max <= 5.5*weight*2.7024 ? collection.orange.push(5.5/weight/2.7024):collection.orange.push(NaN);
-              concen_max <= 6*weight*2.7024 ? collection.red.push(6/weight/2.7024):collection.red.push(NaN);
+              concen_max <= 4*weight*2.7024 ? collection.green.push(4*weight*2.7024):collection.green.push(NaN);
+              concen_max <= 4.5*weight*2.7024 ? collection.blue.push(4.5*weight*2.7024):collection.blue.push(NaN);
+              concen_max <= 5*weight*2.7024 ? collection.yellow.push(5*weight*2.7024):collection.yellow.push(NaN);
+              concen_max <= 5.5*weight*2.7024 ? collection.orange.push(5.5*weight*2.7024):collection.orange.push(NaN);
+              concen_max <= 6*weight*2.7024 ? collection.red.push(6*weight*2.7024):collection.red.push(NaN);
               });
 
             chartcreation(collection, time_labels);
@@ -399,6 +361,7 @@
       </section>
       <section class='col-sm-9'>
         <canvas id='graph' class='col-sm-12'></canvas>
+        <div id='data-sec'></div>
       </section>
     </main>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>

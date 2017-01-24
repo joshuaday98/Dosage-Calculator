@@ -24,7 +24,7 @@ input[name='cycle-length']{
   width: 75%;
 }
 
-.menu{
+#menu{
   overflow-y: scroll;
 }
 
@@ -40,5 +40,10 @@ input[name=dose], input[name=time]{
 
 canvas{
   width: 400;
-  height: 400;
+  height: 350;
+}
+
+.info{
+  align-items: center;
+  font-size: 14px;
 }
