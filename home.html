@@ -30,34 +30,129 @@
           'use strict';
 
 
-          
+          function append_ex_data(extra_data){
+            var $str_array = ['<div class="col-sm-3 info"><h3>Average Dosage</h3><p>'+ extra_data.averages.crystal +'mg/kg/day</p><br/><p>'+ extra_data.averages.powder +'mg/kg/day</p></div>',
+                              '<div class="col-sm-3 info"><h3>Peak Blood Concentration</h3><p>'+ (extra_data.peak.amount).toFixed(2) +' (Day: '+ extra_data.peak.day +')</p></div>',
+                              '<div class="col-sm-3 info"><h3>Average Blood Concentration</h3><p>'+ extra_data.avg_dose +'mg</p></div>',
+                              '<div class="col-sm-3 info"><h3>Estimated Weight Loss</h3><p>~'+ extra_data.weight_loss.amount + extra_data.weight_loss.unit +'</p></div>']
+
+            $.each($str_array, function(i , v){
+              $('#data-sec').append(v)
+            });
+          };
+
+
+          function extra_data(concentrations, form_data){
+            /*
+            Table of contents:
+            1. Data Structure
+            2. Average Blood concentration
+            3. Average Dosage
+            4. Estimated Fat Loss
+            5. Peak
+            */
+            var add = 0;
+            ///////////////////////////////////////////////////////////// 1
+            var extra_data = {'peak':{},
+                              'color_info':{},
+                              'averages':{},
+                              'weight_loss':{}};
+            ///////////////////////////////////////////////////////////// 2
+            var total_crystal = 0;
+            var total_powder = 0;
+
+            $.each(concentrations, function(i, v){
+              total_crystal += v * 0.8933;
+              total_powder += v * 1;
+            });
+
+            extra_data.averages['crystal'] = (total_crystal / concentrations.length).toFixed(2);
+            extra_data.averages['powder'] = (total_powder / concentrations.length).toFixed(2);
+            ///////////////////////////////////////////////////////////// 3
+            var avg_dose = 0, counter = 0;
+            switch($('#dose_form').attr('name')){
+              case 'form-yy':
+
+                $.each(form_data.dose_info, function(i, v){
+                  avg_dose += v.dose * form_data.type;
+                  counter++;
+                });
+
+                add = avg_dose / counter;
+                avg_dose = avg_dose / counter;
+                extra_data['avg_dose'] = (avg_dose / form_data.weight.amount).toFixed(2);
+                break;
+              default:
+
+                $.each(form_data.dose_info, function(i, v){
+                  avg_dose += ($('dose_form').attr('name') == 'form-nn' ? v.day.dose * form_data.type:v.dose * form_data.type);
+                  counter++;
+                });
+
+                add = avg_dose / counter;
+                avg_dose = avg_dose / counter;
+                extra_data['avg_dose'] = (avg_dose / form_data.weight.amount).toFixed(2);
+                break;
+
+            };
+            ///////////////////////////////////////////////////////////// 4
+            var ci = form_data.calories.ci, ce = form_data.calories.ce, cm = form_data.calories.cm;
+            /*
+            Estimated Fatloss formula
+            (((cm + ce) - ci) + (((cm + ce) - ci) * ((add/100) * 0.11))/3500) * cycle length
+            */
+            var cmce = cm + ce
+            var cmceci = cmce - ci;
+            var equation = add/100;
+            equation = equation * 0.11;
+            equation = cmceci * equation;
+            equation += cmceci;
+            equation = equation/3500;
+            var solution = equation * form_data.cycle;
+
+            if(form_data.weight.unit == 'kg'){
+              extra_data.weight_loss['amount'] = (solution * 45349237).toFixed(2);
+              extra_data.weight_loss['unit'] = 'kg';
+            } else{
+              extra_data.weight_loss['amount'] = (solution).toFixed(2);
+              extra_data.weight_loss['unit'] = 'lbs';
+            }
+            ///////////////////////////////////////////////////////////// 5
+
+            extra_data.peak['amount'] = Math.max.apply(null, concentrations);
+            extra_data.peak['day'] = Math.round(concentrations.indexOf(extra_data.peak.amount) / 96);
+
+            /////////////////////////////////////////////////////////////
+
+            append_ex_data(extra_data)
+          };
 
           function generate_chart_data(i, v){
-            var label = 0, background_color = 0, border_hover_back = 0;
+            var label = 0, background_color = 0, border_hover_back = 0, spanGaps = true;
 
             switch(i){
               case 'green':
-                label = 'Barely Noticable';
+                label = '4mg/kg - Barely Noticable';
                 background_color = 'rgba(81, 191, 54, 0.04)';
                 border_hover_back = 'rgba(81, 191, 54, 1)';
                 break;
               case 'blue':
-                label = 'Mildly Uncomfortable';
+                label = '4.5mg/kg - Mildly Uncomfortable';
                 background_color = 'rgba(41, 165, 187, 0.04)';
                 border_hover_back = 'rgba(41, 165, 187, 1)';
                 break;
               case 'yellow':
-                label = 'Uncomfortable';
+                label = '5mg/kg - Uncomfortable';
                 background_color = 'rgba(247, 245, 47, 0.04)';
                 border_hover_back = 'rgba(247, 245, 47, 1)';
                 break;
               case 'orange':
-                label = 'Really uncomfortable';
+                label = '5.5mg/kg - Really uncomfortable';
                 background_color = 'rgba(255, 191, 0, 0.04)';
                 border_hover_back = 'rgba(255, 191, 0, 1)';
                 break;
               case 'red':
-                label = 'Ouch';
+                label = '6mg/kg - Ouch';
                 background_color = 'rgba(255, 52, 52, 0.04)';
                 border_hover_back = 'rgba(255, 52, 52, 1)';
                 break;
@@ -70,6 +165,7 @@
                 label = 'Blood Concentration'
                 background_color = 'rgba(222, 97, 213, 0.04)';
                 border_hover_back = 'rgba(222, 97, 213, 1)';
+                spanGaps = false
                 break;
             };
 
@@ -93,7 +189,7 @@
                 pointRadius: 1,
                 pointHitRadius: 10,
                 data: v,
-                spanGaps: true,
+                spanGaps: spanGaps,
             };
 
             return data_info
@@ -133,11 +229,11 @@
             var concen_max = Math.max.apply(null, blood_concen);
 
             $.each(blood_concen, function(i, v){
-              concen_max <= 4*weight*2.7024 ? collection.green.push(4*weight*2.7024):collection.green.push(NaN);
-              concen_max <= 4.5*weight*2.7024 ? collection.blue.push(4.5*weight*2.7024):collection.blue.push(NaN);
-              concen_max <= 5*weight*2.7024 ? collection.yellow.push(5*weight*2.7024):collection.yellow.push(NaN);
-              concen_max <= 5.5*weight*2.7024 ? collection.orange.push(5.5*weight*2.7024):collection.orange.push(NaN);
-              concen_max <= 6*weight*2.7024 ? collection.red.push(6*weight*2.7024):collection.red.push(NaN);
+              concen_max >= 4*weight*2.7024 ? collection.green.push(4*weight*2.7024):collection.green.push(NaN);
+              concen_max >= 4.5*weight*2.7024 ? collection.blue.push(4.5*weight*2.7024):collection.blue.push(NaN);
+              concen_max >= 5*weight*2.7024 ? collection.yellow.push(5*weight*2.7024):collection.yellow.push(NaN);
+              concen_max >= 5.5*weight*2.7024 ? collection.orange.push(5.5*weight*2.7024):collection.orange.push(NaN);
+              concen_max >= 6*weight*2.7024 ? collection.red.push(6*weight*2.7024):collection.red.push(NaN);
               });
 
             chartcreation(collection, time_labels);
@@ -175,12 +271,9 @@
                 var next_time = 24
                 var end_concent = 0;
 
-
-                // TODO: MAKE IT WORK
-                while(days != form_data.cycle){
+                while(days != form_data.cycle + 7){
                   while(t <= next_time){
                     var len = concentrations.length
-
 
                     var rt= r * t
                     rt = -1 * rt
@@ -188,8 +281,10 @@
                     var concentration = (o * e);
 
                     if(len != 0){
-                      t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentration)):o += 0;
-                    }
+                      if(days <= form_data.cycle){
+                        t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentration)):o += 0;
+                      }
+                    };
 
                     concentrations.push(concentration); times.push(format_time(label_time));
 
@@ -201,46 +296,41 @@
                   days += 1;
                 };
               } else if($('#dose_form').attr('name') == 'form-yy'){
-                var data = form_data.dose_info;
-                var end_concent = 0;
+                var t = 0, o = 0, r = 0.0192540883;
                 var label_time = form_data.dose_info[0].time;
                 var days = 0;
 
-                while(days != form_data.cycle){
-                  $.each(data, function(i, v){
-                    try{
-                      var next_time = data[i + 1].time - v.time
-                    } catch(typeerror){
-                      var next_time = v.time
-                    };
+                var next_time = 24
+                var end_concent = 0, last_dose = 0;
 
-                    var t = 0, o = v.dose, r = 0.0192540883;
+                while(days != form_data.cycle + 7){
+                  while(t <= next_time){
+                    $.each(form_data.dose_info, function(i, v){
+                      if(label_time == v.time){
+                        o -= last_dose
+                        o += v.dose * form_data.type
+                        last_dose = v.dose * form_data.type
+                      }
+                    });
+
                     var len = concentrations.length
 
+                    var rt= r * t
+                    rt = -1 * rt
+                    var e = Math.pow(Math.E, rt);
+                    var concentration = (o * e);
+
                     if(len != 0){
-                        o += concentrations[len - 1];
-                        o -= end_concent;
-                        end_concent = concentrations[len - 1];
-                      };
-
-                    while(t <= next_time){
-
-
-                      var rt= r * t
-                      rt = -1 * rt
-                      var e = Math.pow(Math.E, rt);
-                      var concentration = (o * e);
-
-
-
-                      concentrations.push(concentration); times.push(format_time(label_time));
-
-                      label_time += 0.25;
-                      t += 0.25;
+                        t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentration)):o += 0;
                     };
-                    t = 0;
-                  });
+
+                    concentrations.push(concentration); times.push(format_time(label_time));
+
+                    label_time += 0.25;
+                    t += 0.25;
+                  };
                   label_time = form_data.dose_info[0].time;
+                  t = 0;
                   days += 1;
                 };
               } else{
@@ -371,6 +461,5 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js'></script>
     <script src='static/home.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js'></script>
-
   </body>
 </html>
