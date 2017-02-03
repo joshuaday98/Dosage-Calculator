@@ -47,3 +47,9 @@ canvas{
   align-items: center;
   font-size: 14px;
 }
+
+img{
+  height: 30%;
+  padding-left: 25%;
+  padding-top: 3%;
+}

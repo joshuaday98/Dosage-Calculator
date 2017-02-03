@@ -11,7 +11,7 @@
   <body>
     <main>
       <section id='menu' class='menu col-sm-3'>
-        <h1>Dosage-Calculator</h1>
+        <img class='logo' src='static/img/logo.svg' />
         <hr />
         <form action='javascript:;' onSubmit='handleIt()' id='dose_form' method='post' name=''>
           <!--
@@ -36,7 +36,7 @@
                               '<div class="col-sm-3 info"><h3>Average Blood Concentration</h3><p>'+ extra_data.avg_dose +'mg</p></div>',
                               '<div class="col-sm-3 info"><h3>Estimated Weight Loss</h3><p>~'+ extra_data.weight_loss.amount + extra_data.weight_loss.unit +'</p></div>']
 
-            $.each($str_array, function(i , v){
+            $.each($str_array, function(i, v){
               $('#data-sec').append(v)
             });
           };
@@ -46,8 +46,8 @@
             /*
             Table of contents:
             1. Data Structure
-            2. Average Blood concentration
-            3. Average Dosage
+            2. Average Dosage
+            3. Average Blood Concentration
             4. Estimated Fat Loss
             5. Peak
             */
@@ -334,14 +334,26 @@
                   days += 1;
                 };
               } else{
-                var data = form_data.dose_info;
+                var t = 0, o = 0, r = 0.0192540883;
+                var label_time = form_data.dose_info[0].time;
+                var days = 0;
 
-                $.each(data, function(i, v){
-                  var next_time = v.time - data[i++].time, t = 0, o = v.dose, r = 1/36;
+                var end_concent = 0, last_dose = 0;
 
-                  while(t != next_time){
+                while(days != form_data.cycle + 7){
+                  var previous = 0, next = 1;
+                  var next_time = form_data.dose_info[previous].time - form_data.dose_info[next].time
+
+                  while(t <= next_time){
+                    $.each(form_data.dose_info, function(i, v){
+                      if(label_time == v.time){
+                        o -= last_dose
+                        o += v.dose * form_data.type
+                        last_dose = v.dose * form_data.type
+                      }
+                    });
+
                     var len = concentrations.length
-
 
                     var rt= r * t
                     rt = -1 * rt
@@ -349,8 +361,8 @@
                     var concentration = (o * e);
 
                     if(len != 0){
-                      t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentration)):o += 0;
-                    }
+                        t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentration)):o += 0;
+                    };
 
                     concentrations.push(concentration); times.push(format_time(label_time));
 
@@ -360,7 +372,8 @@
                   label_time = form_data.dose_info[0].time;
                   t = 0;
                   days += 1;
-                });
+                  previous++;next++;
+                };
               };
               console.log(concentrations, times);
               comfort_level(concentrations, times, form_data.weight);
