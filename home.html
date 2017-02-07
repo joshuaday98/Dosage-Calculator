@@ -31,9 +31,9 @@
 
 
           function append_ex_data(extra_data){
-            var $str_array = ['<div class="col-sm-3 info"><h3>Average Dosage</h3><p>'+ extra_data.averages.crystal +'mg/kg/day</p><br/><p>'+ extra_data.averages.powder +'mg/kg/day</p></div>',
+            var $str_array = ['<div class="col-sm-3 info"><h3>Average Dosage</h3><p>'+ extra_data.averages.avg_dose +'mg/kg/day</p></div>',
                               '<div class="col-sm-3 info"><h3>Peak Blood Concentration</h3><p>'+ (extra_data.peak.amount).toFixed(2) +' (Day: '+ extra_data.peak.day +')</p></div>',
-                              '<div class="col-sm-3 info"><h3>Average Blood Concentration</h3><p>'+ extra_data.avg_dose +'mg</p></div>',
+                              '<div class="col-sm-3 info"><h3>Average Blood Concentration</h3><p>'+ extra_data.averages.blood_concen +'mg</p></div>',
                               '<div class="col-sm-3 info"><h3>Estimated Weight Loss</h3><p>~'+ extra_data.weight_loss.amount + extra_data.weight_loss.unit +'</p></div>']
 
             $.each($str_array, function(i, v){
@@ -46,10 +46,11 @@
             /*
             Table of contents:
             1. Data Structure
-            2. Average Dosage
-            3. Average Blood Concentration
-            4. Estimated Fat Loss
-            5. Peak
+            2. Average Blood Concentration
+            3. Average Daily Dose
+            4. Average Dosage
+            5. Estimated Fat Loss
+            6. Peak
             */
             var add = 0;
             ///////////////////////////////////////////////////////////// 1
@@ -58,44 +59,42 @@
                               'averages':{},
                               'weight_loss':{}};
             ///////////////////////////////////////////////////////////// 2
-            var total_crystal = 0;
-            var total_powder = 0;
+            var total = 0;
 
             $.each(concentrations, function(i, v){
-              total_crystal += v * 0.8933;
-              total_powder += v * 1;
+              total += v;
             });
 
-            extra_data.averages['crystal'] = (total_crystal / concentrations.length).toFixed(2);
-            extra_data.averages['powder'] = (total_powder / concentrations.length).toFixed(2);
+            extra_data.averages['blood_concen'] = (total / concentrations.length).toFixed(2);
             ///////////////////////////////////////////////////////////// 3
-            var avg_dose = 0, counter = 0;
+            var counter = 0;
             switch($('#dose_form').attr('name')){
               case 'form-yy':
 
                 $.each(form_data.dose_info, function(i, v){
-                  avg_dose += v.dose * form_data.type;
+                  add += v.dose * form_data.type;
                   counter++;
                 });
 
-                add = avg_dose / counter;
-                avg_dose = avg_dose / counter;
-                extra_data['avg_dose'] = (avg_dose / form_data.weight.amount).toFixed(2);
+                add = add / counter;
                 break;
               default:
 
                 $.each(form_data.dose_info, function(i, v){
-                  avg_dose += ($('dose_form').attr('name') == 'form-nn' ? v.day.dose * form_data.type:v.dose * form_data.type);
+                  add += ($('dose_form').attr('name') == 'form-nn' ? v.day.dose * form_data.type:v.dose * form_data.type);
                   counter++;
                 });
 
-                add = avg_dose / counter;
-                avg_dose = avg_dose / counter;
-                extra_data['avg_dose'] = (avg_dose / form_data.weight.amount).toFixed(2);
+                add = add / counter;
                 break;
-
             };
             ///////////////////////////////////////////////////////////// 4
+            var weight = 0;
+            form_data.weight.unit = 'lbs' ? weight = form_data.weight.amount * 0.453592: weight = form_data.weight.amount;
+
+            extra_data.averages['avg_dose'] = add / form_data.weight;
+
+            ///////////////////////////////////////////////////////////// 5
             var ci = form_data.calories.ci, ce = form_data.calories.ce, cm = form_data.calories.cm;
             /*
             Estimated Fatloss formula
@@ -216,9 +215,9 @@
           };
 
 
-          function comfort_level(blood_concen, time_labels, weight_info){
+          function comfort_level(blood_concen, time_labels, form_data){
             var weight = 0
-            weight_info.unit == 'lbs' ? weight = weight_info.amount * 0.453592:weight = weight_info.amount;
+            weight_info.unit == 'lbs' ? weight = form_data.weight.amount * 0.453592:weight = form_data.weight.amount;
             var collection = {'green':[],
                               'blue':[],
                               'yellow':[],
@@ -229,11 +228,11 @@
             var concen_max = Math.max.apply(null, blood_concen);
 
             $.each(blood_concen, function(i, v){
-              concen_max >= 4*weight*2.7024 ? collection.green.push(4*weight*2.7024):collection.green.push(NaN);
-              concen_max >= 4.5*weight*2.7024 ? collection.blue.push(4.5*weight*2.7024):collection.blue.push(NaN);
-              concen_max >= 5*weight*2.7024 ? collection.yellow.push(5*weight*2.7024):collection.yellow.push(NaN);
-              concen_max >= 5.5*weight*2.7024 ? collection.orange.push(5.5*weight*2.7024):collection.orange.push(NaN);
-              concen_max >= 6*weight*2.7024 ? collection.red.push(6*weight*2.7024):collection.red.push(NaN);
+              concen_max >= (4*form_data.type)*weight*2.7024 ? collection.green.push((4*form_data.type)*weight*2.7024):collection.green.push(NaN);
+              concen_max >= (4.5*form_data.type)*weight*2.7024 ? collection.blue.push((4.5*form_data.type)*weight*2.7024):collection.blue.push(NaN);
+              concen_max >= (5*form_data.type)*weight*2.7024 ? collection.yellow.push((5*form_data.type)*weight*2.7024):collection.yellow.push(NaN);
+              concen_max >= (5.5*form_data.type)*weight*2.7024 ? collection.orange.push((5.5*form_data.type)*weight*2.7024):collection.orange.push(NaN);
+              concen_max >= (6*form_data.type)*weight*2.7024 ? collection.red.push((6*form_data.type)*weight*2.7024):collection.red.push(NaN);
               });
 
             chartcreation(collection, time_labels);
@@ -243,7 +242,7 @@
           function format_time(inp){
             inp = inp.toString();
             inp = inp.split('.');
-            var hour = Number(inp[0]), min= (Number(inp[1])* 60) / 100;
+            var hour = Number(inp[0]), min = (Number(inp[1])* 60) / 100;
 
             hour > 24 ? hour -= 24 : hour = hour;
             isNaN(min) ? min = '00' : min = min.toString();
@@ -376,7 +375,7 @@
                 };
               };
               console.log(concentrations, times);
-              comfort_level(concentrations, times, form_data.weight);
+              comfort_level(concentrations, times, form_data);
               extra_data(concentrations, form_data);
             };
 
