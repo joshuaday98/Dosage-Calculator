@@ -305,7 +305,7 @@
                 while(days != form_data.cycle + 7){
                   while(t <= next_time){
                     $.each(form_data.dose_info, function(i, v){
-                      if(label_time == v.time){
+                      if(format_time(label_time) == v.time){
                         o -= last_dose
                         o += v.dose * form_data.type
                         last_dose = v.dose * form_data.type
