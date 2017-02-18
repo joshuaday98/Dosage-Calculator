@@ -217,7 +217,7 @@
 
           function comfort_level(blood_concen, time_labels, form_data){
             var weight = 0
-            weight_info.unit == 'lbs' ? weight = form_data.weight.amount * 0.453592:weight = form_data.weight.amount;
+            form_data.weight.unit == 'lbs' ? weight = form_data.weight.amount * 0.453592:weight = form_data.weight.amount;
             var collection = {'green':[],
                               'blue':[],
                               'yellow':[],
@@ -305,17 +305,15 @@
                 while(days != form_data.cycle + 7){
                   while(t <= next_time){
                     $.each(form_data.dose_info, function(i, v){
-                      if(format_time(label_time) == v.time){
-                        o -= last_dose
-                        o += v.dose * form_data.type
-                        last_dose = v.dose * form_data.type
+                      if(label_time == v.time){
+                        o = v.dose * form_data.type;
                       }
                     });
 
-                    var len = concentrations.length
+                    var len = concentrations.length;
 
-                    var rt= r * t
-                    rt = -1 * rt
+                    var rt= r * t;
+                    rt = -1 * rt;
                     var e = Math.pow(Math.E, rt);
                     var concentration = (o * e);
 
