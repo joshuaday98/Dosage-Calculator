@@ -304,11 +304,7 @@
 
                 while(days != form_data.cycle + 7){
                   while(t <= next_time){
-                    $.each(form_data.dose_info, function(i, v){
-                      if(label_time == v.time){
-                        o = v.dose * form_data.type;
-                      }
-                    });
+
 
                     var len = concentrations.length;
 
@@ -321,6 +317,12 @@
                         t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentration)):o += 0;
                     };
 
+                    $.each(form_data.dose_info, function(i, v){
+                      if(label_time == v.time){
+                        o = v.dose * form_data.type;
+                        concentration += o;
+                      }
+                    });
                     concentrations.push(concentration); times.push(format_time(label_time));
 
                     label_time += 0.25;
