@@ -31,7 +31,7 @@
 
 
           function append_ex_data(extra_data){
-            var $str_array = ['<div class="col-sm-3 info"><h3>Average Dosage</h3><p>'+ extra_data.averages.avg_dose +'mg/kg/day<br />' + extra_data.averages.avg_dose_c + 'mg/kg/day</p></div>',
+            var $str_array = ['<div class="col-sm-3 info"><h3>Average Dosage</h3><p>'+ extra_data.averages.avg_dose_p +'mg/kg/day<br />' + extra_data.averages.avg_dose_c + 'mg/kg/day</p></div>',
                               '<div class="col-sm-3 info"><h3>Peak Blood Concentration</h3><p>'+ (extra_data.peak.amount).toFixed(2) +' (Day: '+ extra_data.peak.day +')</p></div>',
                               '<div class="col-sm-3 info"><h3>Average Blood Concentration</h3><p>'+ extra_data.averages.blood_concen +'mg</p></div>',
                               '<div class="col-sm-3 info"><h3>Estimated Weight Loss</h3><p>~'+ extra_data.weight_loss.amount + extra_data.weight_loss.unit +'</p></div>']
