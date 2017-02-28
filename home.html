@@ -85,15 +85,18 @@
             var weight = 0;
             form_data.weight.unit = 'lbs' ? weight = form_data.weight.amount * 0.453592: weight = form_data.weight.amount;
 
-            extra_data.averages['avg_dose_c'] = add / weight;
-            extra_data.averages['avg_dose_p'] = add / weight;
+            extra_data.averages['avg_dose_c'] = add_c / weight;
+            extra_data.averages['avg_dose_p'] = add_p / weight;
 
             ///////////////////////////////////////////////////////////// 5
             var ci = form_data.calories.ci, ce = form_data.calories.ce, cm = form_data.calories.cm;
+
+
             /*
             Estimated Fatloss formula
             (((cm + ce) - ci) + (((cm + ce) - ci) * ((add/100) * 0.11))/3500) * cycle length
             */
+            
             var cmce = cm + ce
             var cmceci = cmce - ci;
             var equation = add_c / 100;
