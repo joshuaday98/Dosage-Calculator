@@ -80,12 +80,13 @@
 
             add_c = add_c / counter;
             add_p = add_p / counter;
+
             ///////////////////////////////////////////////////////////// 4
             var weight = 0;
             form_data.weight.unit = 'lbs' ? weight = form_data.weight.amount * 0.453592: weight = form_data.weight.amount;
 
-            extra_data.averages['avg_dose_c'] = add / form_data.weight;
-            extra_data.averages['avg_dose_p'] = add / form_data.weight
+            extra_data.averages['avg_dose_c'] = add / weight;
+            extra_data.averages['avg_dose_p'] = add / weight;
 
             ///////////////////////////////////////////////////////////// 5
             var ci = form_data.calories.ci, ce = form_data.calories.ce, cm = form_data.calories.cm;
