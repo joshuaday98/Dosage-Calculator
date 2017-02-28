@@ -31,7 +31,7 @@
 
 
           function append_ex_data(extra_data){
-            var $str_array = ['<div class="col-sm-3 info"><h3>Average Dosage</h3><p>'+ extra_data.averages.avg_dose +'mg/kg/day</p></div>',
+            var $str_array = ['<div class="col-sm-3 info"><h3>Average Dosage</h3><p>'+ extra_data.averages.avg_dose +'mg/kg/day<br />' + extra_data.averages.avg_dose_c + 'mg/kg/day</p></div>',
                               '<div class="col-sm-3 info"><h3>Peak Blood Concentration</h3><p>'+ (extra_data.peak.amount).toFixed(2) +' (Day: '+ extra_data.peak.day +')</p></div>',
                               '<div class="col-sm-3 info"><h3>Average Blood Concentration</h3><p>'+ extra_data.averages.blood_concen +'mg</p></div>',
                               '<div class="col-sm-3 info"><h3>Estimated Weight Loss</h3><p>~'+ extra_data.weight_loss.amount + extra_data.weight_loss.unit +'</p></div>']
@@ -68,31 +68,22 @@
             extra_data.averages['blood_concen'] = (total / concentrations.length).toFixed(2);
             ///////////////////////////////////////////////////////////// 3
             var counter = 0;
-            switch($('#dose_form').attr('name')){
-              case 'form-yy':
-
-                $.each(form_data.dose_info, function(i, v){
-                  add += v.dose * form_data.type;
-                  counter++;
-                });
-
-                add = add / counter;
-                break;
-              default:
-
-                $.each(form_data.dose_info, function(i, v){
-                  add += ($('dose_form').attr('name') == 'form-nn' ? v.day.dose * form_data.type:v.dose * form_data.type);
-                  counter++;
-                });
-
-                add = add / counter;
-                break;
+            var add_c = 0;
+            var add_p = 0;
+            $.each(form_data.dose_info, function(i, v){
+              add_c += v.dose * 0.8933;
+              add_p += v.dose;
+              counter ++;
             };
+
+            add_c = add_c / counter;
+            add_p = add_p / counter;
             ///////////////////////////////////////////////////////////// 4
             var weight = 0;
             form_data.weight.unit = 'lbs' ? weight = form_data.weight.amount * 0.453592: weight = form_data.weight.amount;
 
-            extra_data.averages['avg_dose'] = add / form_data.weight;
+            extra_data.averages['avg_dose_c'] = add / form_data.weight;
+            extra_data.averages['avg_dose_p'] = add / form_data.weight
 
             ///////////////////////////////////////////////////////////// 5
             var ci = form_data.calories.ci, ce = form_data.calories.ce, cm = form_data.calories.cm;
@@ -270,7 +261,7 @@
                 var next_time = 24
                 var end_concent = 0;
 
-                while(days != form_data.cycle + 7){
+                while(days != form_data.cycle){
                   while(t <= next_time){
                     var len = concentrations.length
 
@@ -422,12 +413,12 @@
           <input type='radio' name='weight-unit' value='lbs' required/> Lbs
           <input type='radio' name='weight-unit' value='kg' required/>Kg
           <!-- 3 -->
-          <h3>Calories:</h3>
-          <small class='form-text text-muted'>Your caloric maintenance</small>
+          <h3>Dietary Intake:</h3>
+          <small class='form-text text-muted'>Your caloric maintenance (Not TDEE)</small>
           <input type='number' name='cal-main' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
-          <small class='form-text text-muted'>Your caloric intake while on your cycle (in Kcal).</small><br />
+          <small class='form-text text-muted'>Daily Caloric intake on cycle.</small><br />
           <input type='number' name='cal-intake' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
-          <small class='form-text text-muted'>Your average caloric expenditure daily</small>
+          <small class='form-text text-muted'>Your average daily caloric expenditure on cycle.</small>
           <input type='number' name='cal-export' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
           <!-- 4 -->
           <h3>Split dosing:</h3>
