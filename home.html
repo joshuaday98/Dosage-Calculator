@@ -101,7 +101,7 @@
             equation = cmceci * equation;
             equation += cmceci;
             equation = equation/3500;
-            var solution = equation * form_data.cycle;
+            var solution = equation * (form_data.cycle + 7);
 
             if(form_data.weight.unit == 'kg'){
               extra_data.weight_loss['amount'] = (solution * 45349237).toFixed(2);
