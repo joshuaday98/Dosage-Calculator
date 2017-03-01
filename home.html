@@ -80,8 +80,8 @@
 
 
             $.each(form_data.dose_info, function(i, v){
-              add_c += v.dose * (form_data.dose_info.type == 1 ? 0.8934 : 1);
-              add_p += v.dose;
+              add_c += v.dose * (form_data.dose_info.type == 1 ? 1 : 1);
+              add_p += v.dose / (form_data.dose_info.type == 1 ? 0.8934 : 0.8934);
               counter ++;
             });
 
@@ -283,22 +283,20 @@
                     var e = Math.pow(Math.E, rt);
                     var concentration = (o * e);
 
-                    if(days <= form_data.cycle){
-                      if(len != 0){
-                        if(days <= form_data.cycle){
-                          t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentration)):o += 0;
-                        }
-                      };
-                    }
-
+                    if(len != 0){
+                      if(days <= form_data.cycle){
+                        t == next_time ? (o += Number(concentration), o -= end_concent, end_concent = Number(concentration)):o += 0;
+                      }
+                    };
 
                     concentrations.push(concentration); times.push(format_time(label_time));
 
                     label_time += 0.25;
+                    (days <= form_data.cycle ? t += 0.25 : t += 0)
                     t += 0.25;
                   };
                   label_time = form_data.dose_info[0].time;
-                  t = 0;
+                  (days <= form_data.cycle ? t = 0 : console.log('lmao')) 
                   days += 1;
                 };
               } else if($('#dose_form').attr('name') == 'form-yy'){
