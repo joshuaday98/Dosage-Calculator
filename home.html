@@ -35,7 +35,7 @@
 
             var $data_div = $('#data-sec');
 
-            $data_div.empty();
+            $data_div.html('');
 
             var $str_array = ['<div class="col-sm-3 info"><h3>Average Dosage</h3><p>'+ (extra_data.averages.avg_dose_p).toFixed(2) +'mg/kg/day (Powder)<br />' + (extra_data.averages.avg_dose_c).toFixed(2) + 'mg/kg/day (Crystal)</p></div>',
                               '<div class="col-sm-3 info"><h3>Peak Blood Concentration</h3><p>'+ (extra_data.peak.amount).toFixed(2) +'mg (Day: '+ extra_data.peak.day +')</p></div>',
