@@ -80,8 +80,8 @@
 
 
             $.each(form_data.dose_info, function(i, v){
-              add_c += v.dose * (form_data.dose_info.type == 1 ? 1 : 1);
-              add_p += v.dose / (form_data.dose_info.type == 1 ? 0.8934 : 0.8934);
+              add_c += v.dose * (form_data.dose_info.type == 1 ? 0.8934 : 1);
+              add_p += v.dose / (form_data.dose_info.type == 1 ? 1 : 0.8934);
               counter ++;
             });
 
@@ -296,7 +296,7 @@
                     t += 0.25;
                   };
                   label_time = form_data.dose_info[0].time;
-                  (days <= form_data.cycle ? t = 0 : console.log('lmao')) 
+                  (days <= form_data.cycle ? t = 0 : console.log('lmao'))
                   days += 1;
                 };
               } else if($('#dose_form').attr('name') == 'form-yy'){
