@@ -292,10 +292,10 @@
                     concentrations.push(concentration); times.push(format_time(label_time));
 
                     label_time += 0.25;
-                    (days <= form_data.cycle ? t += 0.25 : t += 0)
+                    t += 0.25;
                   };
                   label_time = form_data.dose_info[0].time;
-                  (days <= form_data.cycle ? t = 0 : console.log('lmao'))
+                  t = 0;
                   days += 1;
                 };
               } else if($('#dose_form').attr('name') == 'form-yy'){
@@ -308,7 +308,6 @@
 
                 while(days != form_data.cycle + 7){
                   while(t <= next_time){
-
 
                     var len = concentrations.length;
 
