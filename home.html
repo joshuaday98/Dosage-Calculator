@@ -427,11 +427,11 @@
           <input type='radio' name='weight-unit' value='kg' required/>Kg
           <!-- 3 -->
           <h3>Dietary Intake:</h3>
-          <small class='form-text text-muted'>Your caloric maintenance (Not TDEE)</small>
+          <small class='form-text text-muted'>Your caloric maintenance (Not TDEE)</small><a href="#" data-toggle="popover" title="Caloric Matienence" data-trigger="hover" data-content="">   &#10067;</a>
           <input type='number' name='cal-main' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
-          <small class='form-text text-muted'>Daily Caloric intake on cycle.</small><br />
+          <small class='form-text text-muted'>Daily Caloric intake on cycle.</small><a href="#" data-toggle="popover" title="Caloric Intake" data-trigger="hover" data-content="">   &#10067;</a>
           <input type='number' name='cal-intake' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
-          <small class='form-text text-muted'>Your average daily caloric expenditure on cycle.</small>
+          <small class='form-text text-muted'>Your average daily caloric expenditure on cycle.</small><a href="#" data-toggle="popover" title="Caloric Expenditure" data-trigger="hover" data-content="">   &#10067;</a>
           <input type='number' name='cal-export' placeholder='Kcal' min='1' pattern='^[0-9]{4}$' required/>
           <!-- 4 -->
           <h3>Split dosing:</h3>
@@ -477,5 +477,10 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js'></script>
     <script src='static/home.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js'></script>
+    <script>
+      $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();
+      });
+    </script>
   </body>
 </html>

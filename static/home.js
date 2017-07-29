@@ -23,30 +23,30 @@
     if(dosing_var[0] === 'no' & dosing_var[1] === 'yes'){
       $('#dose_form').attr('name', 'form-ny');
       $dose_div.html('</br><span>Days 1-'+ dosing_var[2] +'</span>');
-      $dose_div.append(dose_time_field)
+      $dose_div.append(dose_time_field);
 
     } else if(dosing_var[0] === 'yes' & dosing_var[1] === 'yes'){
       $('#dose_form').attr('name', 'form-yy');
       $dose_div.html('</br><span>Days 1-' + dosing_var[2] +'</span></br>');
 
-      while($splits != 0){
+      while($splits !== 0) {
         $dose_div.append(dose_time_field);
         $splits--;
-      };
+      }
 
     } else if(dosing_var[0] === 'no' & dosing_var[1] === 'no'){
       $('#dose_form').attr('name', 'form-nn');
       var day = 1;
 
-      while(day <= dosing_var[2]){
+      while(day <= dosing_var[2]) {
         $dose_div.append('Day ' + day + ':' + dose_time_field+ '</br>');
         day++;
-      };
+      }
     }
 
     $('#cont-btn').remove();
     $('#submit').append('<button type="submit" class="btn btn-primary" id="submit">Submit</button>');
-  };
+  }
 
   //////////////////////////////////////// 4 ///////////////////////////////////
   (function events(){
@@ -54,13 +54,13 @@
       evt.preventDefault();
       var dosing_var = [$('input[name=split-dose]:checked').val(),
                         $('input[name=samedose-time]:checked').val(),
-                        $('input[name=cycle-length]').val()]
+                        $('input[name=cycle-length]').val()];
 
       if($.inArray("", dosing_var) == -1){
-        console.log(dosing_var)
+        console.log(dosing_var);
         cont(dosing_var);
       } else {
-        console.log(dosing_var)
+        console.log(dosing_var);
         alert('The Split dosing, Same dose & Time of Dose, and the Cycle Length sections must be filled out.')
       }
     });
